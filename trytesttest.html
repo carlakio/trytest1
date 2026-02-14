@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Card</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', 'Georgia', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f8f5f2;
+            padding: 40px 20px;
+        }
+
+        .card-wrapper {
+            perspective: 2000px;
+            width: 800px;
+            max-width: 95vw;
+            height: 550px;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .card.open {
+            transform: translateX(-50%);
+        }
+
+        .card-side {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            background: white;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-left {
+            left: 0;
+            transform-origin: right center;
+            transition: transform 1.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .card.open .card-left {
+            transform: rotateY(-165deg);
+        }
+
+        .card-right {
+            right: 0;
+            left: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease 0.6s;
+        }
+
+        .card.open .card-right {
+            opacity: 1;
+        }
+
+        .card-content {
+            width: 100%;
+            height: 100%;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Front Cover Styling */
+        .front-cover {
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ffffff 0%, #fefcfb 100%);
+            border-right: 1px solid #f0e9e3;
+        }
+
+        .cover-title {
+            font-size: 2.8em;
+            color: #8b7355;
+            letter-spacing: 3px;
+            text-align: center;
+            font-weight: 300;
+            margin-bottom: 30px;
+            line-height: 1.3;
+        }
+
+        .cover-subtitle {
+            font-size: 1.1em;
+            color: #a89080;
+            text-align: center;
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        /* Daisy Illustrations */
+        .daisy-decoration {
+            position: absolute;
+        }
+
+        .daisy-top-left {
+            top: 30px;
+            left: 30px;
+            width: 80px;
+            height: 80px;
+        }
+
+        .daisy-bottom-right {
+            bottom: 30px;
+            right: 30px;
+            width: 100px;
+            height: 100px;
+            opacity: 0.9;
+        }
+
+        .daisy-cluster {
+            bottom: 20px;
+            left: 20px;
+            width: 120px;
+            height: 90px;
+            opacity: 0.85;
+        }
+
+        /* Realistic Daisy SVG */
+        .daisy-svg {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+        }
+
+        /* Inside Right Page */
+        .inside-page {
+            background: #fffefb;
+        }
+
+        .letter-header {
+            font-size: 1.8em;
+            color: #8b7355;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .letter-content {
+            flex: 1;
+            font-family: 'Cormorant Garamond', 'Georgia', serif;
+            font-size: 1.15em;
+            line-height: 1.8;
+            color: #4a4a4a;
+            padding: 15px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .signature-line {
+            text-align: right;
+            font-size: 1.1em;
+            color: #8b7355;
+            font-style: italic;
+            margin-top: 20px;
+            padding-right: 15px;
+        }
+
+        /* Open Instruction */
+        .open-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.85em;
+            color: #a89080;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .card.open .open-hint {
+            opacity: 0;
+        }
+
+        /* Decorative elements on right page */
+        .daisy-corner-right {
+            top: 20px;
+            right: 25px;
+            width: 70px;
+            height: 70px;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .card-wrapper {
+                height: 450px;
+            }
+
+            .card-content {
+                padding: 30px 25px;
+            }
+
+            .cover-title {
+                font-size: 2em;
+            }
+
+            .letter-header {
+                font-size: 1.5em;
+            }
+
+            .letter-content {
+                font-size: 1em;
+            }
+
+            .daisy-top-left,
+            .daisy-bottom-right,
+            .daisy-cluster {
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        /* Close button */
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            border: 1.5px solid #8b7355;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            color: #8b7355;
+            transition: all 0.3s;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .card.open .close-button {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .close-button:hover {
+            background: #8b7355;
+            color: white;
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="card-wrapper">
+        <div class="card" id="card">
+            <!-- Left Side (Front Cover) -->
+            <div class="card-side card-left" id="cardLeft">
+                <div class="card-content front-cover">
+                    <!-- Daisy decorations -->
+                    <div class="daisy-decoration daisy-top-left">
+                        <svg class="daisy-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <radialGradient id="petal-grad-1" cx="50%" cy="30%">
+                                    <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                                    <stop offset="70%" style="stop-color:#fefefe;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#f5f5f5;stop-opacity:1" />
+                                </radialGradient>
+                                <radialGradient id="center-grad-1" cx="50%" cy="50%">
+                                    <stop offset="0%" style="stop-color:#ffd35c;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#f4c430;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#d4a017;stop-opacity:1" />
+                                </radialGradient>
+                            </defs>
+                            <!-- Petals -->
+                            <ellipse cx="50" cy="18" rx="7" ry="15" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3"/>
+                            <ellipse cx="50" cy="82" rx="7" ry="15" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3"/>
+                            <ellipse cx="18" cy="50" rx="15" ry="7" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3"/>
+                            <ellipse cx="82" cy="50" rx="15" ry="7" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3"/>
+                            <ellipse cx="28" cy="28" rx="11" ry="11" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(-45 28 28)"/>
+                            <ellipse cx="72" cy="28" rx="11" ry="11" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(45 72 28)"/>
+                            <ellipse cx="28" cy="72" rx="11" ry="11" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(45 28 72)"/>
+                            <ellipse cx="72" cy="72" rx="11" ry="11" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(-45 72 72)"/>
+                            <!-- Center -->
+                            <circle cx="50" cy="50" r="13" fill="url(#center-grad-1)"/>
+                            <circle cx="50" cy="50" r="13" fill="none" stroke="#d4a017" stroke-width="0.5"/>
+                            <!-- Texture dots on center -->
+                            <circle cx="48" cy="48" r="0.8" fill="#c89000" opacity="0.6"/>
+                            <circle cx="53" cy="47" r="0.7" fill="#c89000" opacity="0.5"/>
+                            <circle cx="51" cy="52" r="0.9" fill="#c89000" opacity="0.6"/>
+                            <circle cx="47" cy="53" r="0.7" fill="#c89000" opacity="0.5"/>
+                            <circle cx="54" cy="51" r="0.6" fill="#c89000" opacity="0.4"/>
+                        </svg>
+                    </div>
+
+                    <div class="daisy-decoration daisy-bottom-right">
+                        <svg class="daisy-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <radialGradient id="petal-grad-2" cx="50%" cy="30%">
+                                    <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                                    <stop offset="70%" style="stop-color:#fefefe;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#f5f5f5;stop-opacity:1" />
+                                </radialGradient>
+                                <radialGradient id="center-grad-2" cx="50%" cy="50%">
+                                    <stop offset="0%" style="stop-color:#ffd35c;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#f4c430;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#d4a017;stop-opacity:1" />
+                                </radialGradient>
+                            </defs>
+                            <ellipse cx="50" cy="18" rx="7" ry="15" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3"/>
+                            <ellipse cx="50" cy="82" rx="7" ry="15" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3"/>
+                            <ellipse cx="18" cy="50" rx="15" ry="7" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3"/>
+                            <ellipse cx="82" cy="50" rx="15" ry="7" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3"/>
+                            <ellipse cx="28" cy="28" rx="11" ry="11" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(-45 28 28)"/>
+                            <ellipse cx="72" cy="28" rx="11" ry="11" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(45 72 28)"/>
+                            <ellipse cx="28" cy="72" rx="11" ry="11" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(45 28 72)"/>
+                            <ellipse cx="72" cy="72" rx="11" ry="11" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(-45 72 72)"/>
+                            <circle cx="50" cy="50" r="13" fill="url(#center-grad-2)"/>
+                            <circle cx="50" cy="50" r="13" fill="none" stroke="#d4a017" stroke-width="0.5"/>
+                            <circle cx="48" cy="48" r="0.8" fill="#c89000" opacity="0.6"/>
+                            <circle cx="53" cy="47" r="0.7" fill="#c89000" opacity="0.5"/>
+                            <circle cx="51" cy="52" r="0.9" fill="#c89000" opacity="0.6"/>
+                            <circle cx="47" cy="53" r="0.7" fill="#c89000" opacity="0.5"/>
+                            <circle cx="54" cy="51" r="0.6" fill="#c89000" opacity="0.4"/>
+                        </svg>
+                    </div>
+
+                    <div class="cover-title">
+                        Happy<br>Valentine's Day Andy
+                    </div>
+                    <div class="cover-subtitle">Open to read my letter</div>
+                    <div class="open-hint">Click to open →</div>
+                </div>
+            </div>
+
+            <!-- Right Side (Inside Page) -->
+            <div class="card-side card-right">
+                <div class="card-content inside-page">
+                    <button class="close-button" id="closeBtn" title="Close card">×</button>
+                    
+                    <div class="daisy-decoration daisy-cluster">
+                        <svg class="daisy-svg" viewBox="0 0 140 100" xmlns="http://www.w3.org/2000/svg">
+                            <!-- First daisy -->
+                            <g transform="translate(25, 35) scale(0.7)">
+                                <ellipse cx="50" cy="18" rx="6" ry="13" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3"/>
+                                <ellipse cx="50" cy="82" rx="6" ry="13" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3"/>
+                                <ellipse cx="18" cy="50" rx="13" ry="6" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3"/>
+                                <ellipse cx="82" cy="50" rx="13" ry="6" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3"/>
+                                <ellipse cx="28" cy="28" rx="10" ry="10" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(-45 28 28)"/>
+                                <ellipse cx="72" cy="28" rx="10" ry="10" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(45 72 28)"/>
+                                <ellipse cx="28" cy="72" rx="10" ry="10" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(45 28 72)"/>
+                                <ellipse cx="72" cy="72" rx="10" ry="10" fill="url(#petal-grad-1)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(-45 72 72)"/>
+                                <circle cx="50" cy="50" r="11" fill="url(#center-grad-1)"/>
+                            </g>
+                            <!-- Second daisy -->
+                            <g transform="translate(65, 20) scale(0.6)">
+                                <ellipse cx="50" cy="18" rx="6" ry="13" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3"/>
+                                <ellipse cx="50" cy="82" rx="6" ry="13" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3"/>
+                                <ellipse cx="18" cy="50" rx="13" ry="6" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3"/>
+                                <ellipse cx="82" cy="50" rx="13" ry="6" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3"/>
+                                <ellipse cx="28" cy="28" rx="10" ry="10" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(-45 28 28)"/>
+                                <ellipse cx="72" cy="28" rx="10" ry="10" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(45 72 28)"/>
+                                <ellipse cx="28" cy="72" rx="10" ry="10" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(45 28 72)"/>
+                                <ellipse cx="72" cy="72" rx="10" ry="10" fill="url(#petal-grad-2)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(-45 72 72)"/>
+                                <circle cx="50" cy="50" r="11" fill="url(#center-grad-2)"/>
+                            </g>
+                            <!-- Third daisy -->
+                            <g transform="translate(50, 50) scale(0.5)">
+                                <ellipse cx="50" cy="18" rx="6" ry="13" fill="url(#petal-grad-3)" stroke="#e8e8e8" stroke-width="0.3"/>
+                                <ellipse cx="50" cy="82" rx="6" ry="13" fill="url(#petal-grad-3)" stroke="#e8e8e8" stroke-width="0.3"/>
+                                <ellipse cx="18" cy="50" rx="13" ry="6" fill="url(#petal-grad-3)" stroke="#e8e8e8" stroke-width="0.3"/>
+                                <ellipse cx="82" cy="50" rx="13" ry="6" fill="url(#petal-grad-3)" stroke="#e8e8e8" stroke-width="0.3"/>
+                                <ellipse cx="28" cy="28" rx="10" ry="10" fill="url(#petal-grad-3)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(-45 28 28)"/>
+                                <ellipse cx="72" cy="28" rx="10" ry="10" fill="url(#petal-grad-3)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(45 72 28)"/>
+                                <ellipse cx="28" cy="72" rx="10" ry="10" fill="url(#petal-grad-3)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(45 28 72)"/>
+                                <ellipse cx="72" cy="72" rx="10" ry="10" fill="url(#petal-grad-3)" stroke="#e8e8e8" stroke-width="0.3" transform="rotate(-45 72 72)"/>
+                                <circle cx="50" cy="50" r="11" fill="url(#center-grad-3)"/>
+                            </g>
+                        </svg>
+                    </div>
+
+                    <h2 class="letter-header">Hi!</h2>
+                    
+                    
+                    <div class="letter-content" id="letterContent">
+I know nothing would ever make you forgive me for what I did to you but you deserve all the love in the world.
+There's not a day where I would regret meeting you. You are everything.. Love u and take care! <3
+                    </div>
+                    
+                    <div class="signature-line">akio</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const card = document.getElementById('card');
+        const cardLeft = document.getElementById('cardLeft');
+        const closeBtn = document.getElementById('closeBtn');
+
+        // Open card
+        cardLeft.addEventListener('click', () => {
+            if (!card.classList.contains('open')) {
+                card.classList.add('open');
+            }
+        });
+
+        // Close card
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            card.classList.remove('open');
+        });
+    </script>
+</body>
+</html>
